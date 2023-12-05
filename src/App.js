@@ -3,6 +3,7 @@ import Form from "./components/Form";
 import Signature from "./components/Signature";
 import "./App.css";
 import ZipCode from "./components/maps";
+import StaticMap from "./components/staticMap";
 
 function App() {
   return (
@@ -11,7 +12,8 @@ function App() {
         <Routes>
           <Route exact path="/" element={<Form />} />
           <Route exact path="/signature" element={<Signature />} />
-          <Route exact path="/maps" element={<ZipCode />} />
+          {/* <Route exact path="/maps" element={<ZipCode />} /> */}
+          <Route exact path="/maps" element={<StaticMap />} />
         </Routes>
       </BrowserRouter>
     </div>
