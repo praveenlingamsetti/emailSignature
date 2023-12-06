@@ -8,7 +8,9 @@ import { CgArrowLongLeft } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
 
 const ZipCodeFromExcel = () => {
-  const [locations, setLocations] = useState([]);
+  const [locations, setLocations] = useState(
+    JSON.parse(localStorage.getItem("locations")) || []
+  ); //localStorage.getItem("Location")
   const [zipCodes, setZipCodes] = useState([]);
 
   const navigate = useNavigate();
@@ -27,13 +29,17 @@ const ZipCodeFromExcel = () => {
         label: row.Location,
         zipCode: row.ZipCode,
       }));
-      console.log("Extracted locations", extractedLocations);
+      //console.log("Extracted locations", extractedLocations);
 
       const zipCodes = extractedLocations.map((location) => ({
         zipCode: location.zipCode,
         label: location.label,
       }));
+      //previousZipcodes=localStorage.getItem('zipcodes')
+      const newZipcodes = "zipcodes whose not in previouscodes";
       setZipCodes(zipCodes);
+
+      localStorage.setItem("zipCodes", zipCodes);
     };
 
     if (file) {
@@ -50,10 +56,10 @@ const ZipCodeFromExcel = () => {
   });
 
   // Function to fetch coordinates for ZIP code using a geocoding service
-  const getCoordinatesFromZIP = async (zipCode, label) => {
+  const getCoordinatesFromZIP = async (each) => {
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${zipCode}&format=json`
+        `https://nominatim.openstreetmap.org/search?q=${each.zipCode}&format=json`
       );
       const data = await response.json();
       if (data && data.length > 0) {
@@ -61,8 +67,15 @@ const ZipCodeFromExcel = () => {
         if (lat && lon) {
           setLocations((prevLocations) => [
             ...prevLocations,
-            { lat: parseFloat(lat), lng: parseFloat(lon), label: label },
+            { lat: parseFloat(lat), lng: parseFloat(lon), label: each.label },
           ]);
+
+          if (each === zipCodes[-1]) {
+            localStorage.setItem("Locations", [
+              ...locations,
+              { lat: parseFloat(lat), lng: parseFloat(lon), label: each.label },
+            ]);
+          }
         } else {
           console.error("Latitude or longitude is undefined");
         }
@@ -76,9 +89,9 @@ const ZipCodeFromExcel = () => {
 
   useEffect(() => {
     zipCodes.forEach((each) => {
-      getCoordinatesFromZIP(each.zipCode, each.label);
+      getCoordinatesFromZIP(each);
     });
-  }, [zipCodes]);
+  }, []);
 
   return (
     <>
@@ -98,7 +111,7 @@ const ZipCodeFromExcel = () => {
         style={{ height: "500px", width: "100%" }}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        {locations.map((location, index) => (
+        {locations?.map((location, index) => (
           <Marker
             icon={customIcon}
             key={index}

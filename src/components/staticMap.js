@@ -7,7 +7,7 @@ import { Icon } from "leaflet";
 const StaticMap = () => {
   const [locations, setLocations] = useState([]);
   const zipCodes = ["530068", "560001", "560002", "560003", "560004"];
-
+  console.log(locations);
   const customIcon = new Icon({
     iconUrl:
       "https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/images/marker-icon.png",

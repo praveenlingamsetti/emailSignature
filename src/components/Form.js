@@ -26,6 +26,16 @@ function Form() {
   const [image, setImage] = useState(null);
   const navigate = useNavigate();
 
+  const locations = [
+    { lat: 12.974617449466193, lng: 77.59689253131673, label: "560001" },
+    { lat: 37.8535385, lng: 23.7796653, label: "530068" },
+    { lat: 13.364599496078432, lng: 77.44971974705882, label: "560002" },
+    { lat: 12.997048671193415, lng: 77.57119935226338, label: "560003" },
+    { lat: 12.945300254545455, lng: 77.57434126428572, label: "560004" },
+  ];
+
+  localStorage.setItem("locations", JSON.stringify(locations));
+
   const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
