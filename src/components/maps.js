@@ -96,6 +96,8 @@ const ZipCodeFromExcel = () => {
     });
   }, [zipCodes]);
 
+  //console.log(locations);
+
   useEffect(() => {
     // Remove duplicates using Set
     const uniqueLocations = Array.from(
@@ -119,9 +121,9 @@ const ZipCodeFromExcel = () => {
         />
       </div>
       <MapContainer
-        center={[12, 77]} // Centered around the india
-        zoom={4}
-        style={{ height: "500px", width: "100%" }}
+        center={[12.972442, 77.580643]} // Centered around the india
+        zoom={5}
+        style={{ height: "400px", width: "80%", margin: "auto" }}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {locations?.map((location, index) => (
@@ -130,7 +132,7 @@ const ZipCodeFromExcel = () => {
             key={index}
             position={[location.lat, location.lng]}
           >
-            <Popup>{location.label}</Popup>
+            <Popup>{location?.label}</Popup>
           </Marker>
         ))}
       </MapContainer>
