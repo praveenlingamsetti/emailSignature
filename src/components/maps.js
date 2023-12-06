@@ -12,7 +12,7 @@ const ZipCodeFromExcel = () => {
     JSON.parse(localStorage.getItem("locations")) || []
   ); //localStorage.getItem("Location")
   const [zipCodes, setZipCodes] = useState([]);
-  const previousZipcodes = JSON.parse(localStorage.getItem("zipcodes"));
+  const previousZipcodes = JSON.parse(localStorage.getItem("zipCodes")) || [];
   const navigate = useNavigate();
 
   const handleFileUpload = async (e) => {
@@ -25,24 +25,31 @@ const ZipCodeFromExcel = () => {
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
       const data = XLSX.utils.sheet_to_json(ws);
-      const extractedLocations = data.map((row) => ({
-        label: row.Location,
-        zipCode: row.ZipCode,
-      }));
+      const extractedLocations = data.map((row) => row.Zipcodes);
       //console.log("Extracted locations", extractedLocations);
 
-      const zipCodes = extractedLocations.map((location) => ({
-        zipCode: location.zipCode,
-        label: location.label,
-      }));
+      // const zipCodes = extractedLocations.map((location) => ({
+      //   zipCode: location.Zipcodes,
+      //   label: location.Zipcodes,
+      // }));
 
-      const newZipcodes = zipCodes.filter(
-        (zip) =>
-          !previousZipcodes.some((prevZip) => prevZip.zipCode === zip.zipCode)
+      console.log(extractedLocations);
+      const newZipcodes = extractedLocations.filter(
+        (zip) => !previousZipcodes.some((prevZip) => prevZip === zip)
       );
-      setZipCodes(newZipcodes);
+
+      if (previousZipcodes.length > 0) {
+        setZipCodes(newZipcodes);
+      } else {
+        setZipCodes(extractedLocations);
+      }
+
+      // console.log(newZipcodes);
+      // console.log(previousZipcodes);
+      // console.log(...newZipcodes, ...previousZipcodes);
+      const updatedZipCodes = [...newZipcodes, ...previousZipcodes];
       //console.log();
-      //localStorage.setItem("zipCodes", zipCodes);
+      localStorage.setItem("zipCodes", JSON.stringify(updatedZipCodes));
     };
 
     if (file) {
@@ -62,7 +69,7 @@ const ZipCodeFromExcel = () => {
   const getCoordinatesFromZIP = async (each) => {
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${each.zipCode}&format=json`
+        `https://nominatim.openstreetmap.org/search?q=${each}&format=json`
       );
       const data = await response.json();
       if (data && data.length > 0) {
@@ -70,23 +77,8 @@ const ZipCodeFromExcel = () => {
         if (lat && lon) {
           setLocations((prevLocations) => [
             ...prevLocations,
-            { lat: parseFloat(lat), lng: parseFloat(lon), label: each.label },
+            { lat: parseFloat(lat), lng: parseFloat(lon), label: each },
           ]);
-
-          if (each === zipCodes[-1]) {
-            //localStorage.setItem("locations", JSON.stringify(locations));
-            localStorage.setItem(
-              "locations",
-              JSON.stringify([
-                ...locations,
-                {
-                  lat: parseFloat(lat),
-                  lng: parseFloat(lon),
-                  label: each.label,
-                },
-              ])
-            );
-          }
         } else {
           console.error("Latitude or longitude is undefined");
         }
@@ -104,6 +96,16 @@ const ZipCodeFromExcel = () => {
     });
   }, [zipCodes]);
 
+  useEffect(() => {
+    // Remove duplicates using Set
+    const uniqueLocations = Array.from(
+      new Set(locations.map(JSON.stringify))
+    ).map(JSON.parse);
+
+    // Set unique locations to localStorage
+    localStorage.setItem("locations", JSON.stringify(uniqueLocations));
+  }, [locations]);
+
   return (
     <>
       <div className="top-container-map">
@@ -117,7 +119,7 @@ const ZipCodeFromExcel = () => {
         />
       </div>
       <MapContainer
-        center={[12, 77]} // Centered around the indias
+        center={[12, 77]} // Centered around the india
         zoom={4}
         style={{ height: "500px", width: "100%" }}
       >
