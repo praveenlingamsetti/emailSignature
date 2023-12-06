@@ -12,7 +12,7 @@ const ZipCodeFromExcel = () => {
     JSON.parse(localStorage.getItem("locations")) || []
   ); //localStorage.getItem("Location")
   const [zipCodes, setZipCodes] = useState([]);
-
+  const previousZipcodes = JSON.parse(localStorage.getItem("zipcodes"));
   const navigate = useNavigate();
 
   const handleFileUpload = async (e) => {
@@ -35,11 +35,14 @@ const ZipCodeFromExcel = () => {
         zipCode: location.zipCode,
         label: location.label,
       }));
-      //previousZipcodes=localStorage.getItem('zipcodes')
-      const newZipcodes = "zipcodes whose not in previouscodes";
-      setZipCodes(zipCodes);
 
-      localStorage.setItem("zipCodes", zipCodes);
+      const newZipcodes = zipCodes.filter(
+        (zip) =>
+          !previousZipcodes.some((prevZip) => prevZip.zipCode === zip.zipCode)
+      );
+      setZipCodes(newZipcodes);
+      //console.log();
+      //localStorage.setItem("zipCodes", zipCodes);
     };
 
     if (file) {
@@ -71,10 +74,18 @@ const ZipCodeFromExcel = () => {
           ]);
 
           if (each === zipCodes[-1]) {
-            localStorage.setItem("Locations", [
-              ...locations,
-              { lat: parseFloat(lat), lng: parseFloat(lon), label: each.label },
-            ]);
+            //localStorage.setItem("locations", JSON.stringify(locations));
+            localStorage.setItem(
+              "locations",
+              JSON.stringify([
+                ...locations,
+                {
+                  lat: parseFloat(lat),
+                  lng: parseFloat(lon),
+                  label: each.label,
+                },
+              ])
+            );
           }
         } else {
           console.error("Latitude or longitude is undefined");
@@ -91,7 +102,7 @@ const ZipCodeFromExcel = () => {
     zipCodes.forEach((each) => {
       getCoordinatesFromZIP(each);
     });
-  }, []);
+  }, [zipCodes]);
 
   return (
     <>

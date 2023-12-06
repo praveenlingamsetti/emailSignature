@@ -34,8 +34,16 @@ function Form() {
     { lat: 12.945300254545455, lng: 77.57434126428572, label: "560004" },
   ];
 
-  localStorage.setItem("locations", JSON.stringify(locations));
+  const zipCodes = [
+    { zipCode: 560001, label: "a" },
+    { zipCode: 530068, label: "b" },
+    { zipCode: 560002, label: "c" },
+    { zipCode: 560003, label: "d" },
+    { zipCode: 560004, label: "e" },
+  ];
 
+  localStorage.setItem("locations", JSON.stringify(locations));
+  localStorage.setItem("zipcodes", JSON.stringify(zipCodes));
   const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
