@@ -6,6 +6,9 @@ import { Icon } from "leaflet";
 import * as XLSX from "xlsx";
 import { CgArrowLongLeft } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
+import { Box, LinearProgress } from "@mui/material";
+import toast from "react-hot-toast";
 
 const ZipCodeFromExcel = () => {
   const [locations, setLocations] = useState(
@@ -15,6 +18,7 @@ const ZipCodeFromExcel = () => {
   const previousZipcodes = locations.map((each) => each.label);
   const navigate = useNavigate();
 
+  //console.log(loading);
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -36,11 +40,6 @@ const ZipCodeFromExcel = () => {
       } else {
         setZipCodes(extractedLocations);
       }
-
-      // const updatedZipCodes = [...newZipcodes, ...previousZipcodes];
-      // console.log(newZipcodes);
-      // console.log(previousZipcodes);
-      // localStorage.setItem("zipCodes", JSON.stringify(updatedZipCodes));
     };
 
     if (file) {
@@ -56,8 +55,7 @@ const ZipCodeFromExcel = () => {
     popupAnchor: [1, -34],
   });
 
-  // Function to fetch coordinates for ZIP code using a geocoding service
-  const getCoordinatesFromZIP = async (each) => {
+  const getCoordinatesFromZIP = async (each, delay) => {
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${each}&format=json`
@@ -78,16 +76,25 @@ const ZipCodeFromExcel = () => {
       }
     } catch (error) {
       console.error("Error fetching coordinates for ZIP code:", error);
+    } finally {
+      // Add a delay before making the next call
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   };
 
   useEffect(() => {
-    zipCodes.forEach((each) => {
-      getCoordinatesFromZIP(each);
+    const delay = 1200;
+
+    zipCodes.forEach((each, index) => {
+      setTimeout(() => {
+        getCoordinatesFromZIP(each, delay);
+        if (index === zipCodes.length - 1) {
+          toast.success("Completed");
+          console.log("completed");
+        }
+      }, index * delay);
     });
   }, [zipCodes]);
-
-  //console.log(locations);
 
   useEffect(() => {
     // Remove duplicates using Set
@@ -100,10 +107,13 @@ const ZipCodeFromExcel = () => {
   }, [locations]);
 
   const handleClearData = () => {
-    localStorage.removeItem("locations");
-    localStorage.removeItem("zipCodes");
-    setLocations([]);
-    setZipCodes([]);
+    if (window.confirm("Do You Want to Clear?")) {
+      localStorage.removeItem("locations");
+      localStorage.removeItem("zipCodes");
+      setLocations([]);
+      setZipCodes([]);
+      window.location.reload();
+    }
   };
 
   return (

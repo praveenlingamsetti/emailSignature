@@ -16,25 +16,6 @@ const StaticMap = () => {
     popupAnchor: [1, -34],
   });
 
-  // Function to fetch coordinates for ZIP code using a geocoding service
-  // const getCoordinatesFromZIP = async (zipCode) => {
-  //   try {
-  //     const response = await fetch(
-  //       `https://nominatim.openstreetmap.org/search?q=${zipCode}&format=json`
-  //     );
-  //     const data = await response.json();
-  //     if (data && data.length > 0) {
-  //       const { lat, lon } = data[0];
-  //       setLocations((prevLocations) => [
-  //         ...prevLocations,
-  //         { lat: parseFloat(lat), lng: parseFloat(lon), label: zipCode },
-  //       ]);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching coordinates for ZIP code:", error);
-  //   }
-  // };
-
   const getCoordinatesFromZIP = async (zipCode) => {
     try {
       const apiKey = "AIzaSyDAYik2qayomm2OLaV0KWNB9xnlmLt4z0g";
