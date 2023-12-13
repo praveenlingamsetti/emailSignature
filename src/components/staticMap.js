@@ -17,21 +17,42 @@ const StaticMap = () => {
   });
 
   // Function to fetch coordinates for ZIP code using a geocoding service
+  // const getCoordinatesFromZIP = async (zipCode) => {
+  //   try {
+  //     const response = await fetch(
+  //       `https://nominatim.openstreetmap.org/search?q=${zipCode}&format=json`
+  //     );
+  //     const data = await response.json();
+  //     if (data && data.length > 0) {
+  //       const { lat, lon } = data[0];
+  //       setLocations((prevLocations) => [
+  //         ...prevLocations,
+  //         { lat: parseFloat(lat), lng: parseFloat(lon), label: zipCode },
+  //       ]);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching coordinates for ZIP code:", error);
+  //   }
+  // };
+
   const getCoordinatesFromZIP = async (zipCode) => {
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${zipCode}&format=json`
-      );
+      const apiKey = "AIzaSyDAYik2qayomm2OLaV0KWNB9xnlmLt4z0g";
+      const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${zipCode}&key=${apiKey}`;
+
+      const response = await fetch(apiUrl);
       const data = await response.json();
-      if (data && data.length > 0) {
-        const { lat, lon } = data[0];
-        setLocations((prevLocations) => [
-          ...prevLocations,
-          { lat: parseFloat(lat), lng: parseFloat(lon), label: zipCode },
-        ]);
+
+      if (data.results && data.results.length > 0) {
+        const { lat, lng } = data.results[0].geometry.location;
+        return { lat, lng };
+      } else {
+        console.error("No coordinates found for ZIP code");
+        return null;
       }
     } catch (error) {
       console.error("Error fetching coordinates for ZIP code:", error);
+      return null;
     }
   };
 

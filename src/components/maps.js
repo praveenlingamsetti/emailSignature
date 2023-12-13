@@ -12,7 +12,7 @@ const ZipCodeFromExcel = () => {
     JSON.parse(localStorage.getItem("locations")) || []
   ); //localStorage.getItem("Location")
   const [zipCodes, setZipCodes] = useState([]);
-  const previousZipcodes = JSON.parse(localStorage.getItem("zipCodes")) || [];
+  const previousZipcodes = locations.map((each) => each.label);
   const navigate = useNavigate();
 
   const handleFileUpload = async (e) => {
@@ -26,30 +26,21 @@ const ZipCodeFromExcel = () => {
       const ws = wb.Sheets[wsname];
       const data = XLSX.utils.sheet_to_json(ws);
       const extractedLocations = data.map((row) => row.Zipcodes);
-      //console.log("Extracted locations", extractedLocations);
 
-      // const zipCodes = extractedLocations.map((location) => ({
-      //   zipCode: location.Zipcodes,
-      //   label: location.Zipcodes,
-      // }));
-
-      console.log(extractedLocations);
       const newZipcodes = extractedLocations.filter(
         (zip) => !previousZipcodes.some((prevZip) => prevZip === zip)
       );
-
+      // console.log(newZipcodes);
       if (previousZipcodes.length > 0) {
         setZipCodes(newZipcodes);
       } else {
         setZipCodes(extractedLocations);
       }
 
+      // const updatedZipCodes = [...newZipcodes, ...previousZipcodes];
       // console.log(newZipcodes);
       // console.log(previousZipcodes);
-      // console.log(...newZipcodes, ...previousZipcodes);
-      const updatedZipCodes = [...newZipcodes, ...previousZipcodes];
-      //console.log();
-      localStorage.setItem("zipCodes", JSON.stringify(updatedZipCodes));
+      // localStorage.setItem("zipCodes", JSON.stringify(updatedZipCodes));
     };
 
     if (file) {
@@ -108,6 +99,13 @@ const ZipCodeFromExcel = () => {
     localStorage.setItem("locations", JSON.stringify(uniqueLocations));
   }, [locations]);
 
+  const handleClearData = () => {
+    localStorage.removeItem("locations");
+    localStorage.removeItem("zipCodes");
+    setLocations([]);
+    setZipCodes([]);
+  };
+
   return (
     <>
       <div className="top-container-map">
@@ -136,6 +134,13 @@ const ZipCodeFromExcel = () => {
           </Marker>
         ))}
       </MapContainer>
+      <button
+        onClick={handleClearData}
+        style={{ width: "100px" }}
+        className="submit"
+      >
+        CLEAR
+      </button>
     </>
   );
 };
