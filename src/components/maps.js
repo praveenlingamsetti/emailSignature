@@ -135,8 +135,9 @@ const ZipCodeFromExcel = () => {
       </div>
       <MapContainer
         center={[12, 77]} // Centered around the india
-        zoom={5}
-        style={{ height: "400px", width: "80%", margin: "auto" }}
+        //center={[0, 0]} // Centered around the world
+        zoom={2}
+        style={{ height: "420px", width: "90%", margin: "auto" }}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {locations?.map((location, index) => (
