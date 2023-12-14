@@ -219,7 +219,7 @@ function Form() {
           Submit Changes
         </button>
         <div style={{ width: "10px" }}></div>
-        <div onClick={onClickNavigateToMap}>
+        <div style={{ cursor: "pointer" }} onClick={onClickNavigateToMap}>
           <SiGooglemaps className="maps-icon" />
           <span style={{ fontSize: "14px" }}>Maps</span>
         </div>

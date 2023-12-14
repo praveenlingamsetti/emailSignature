@@ -1,27 +1,7 @@
-/* .form{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 12px;
-    width:40%;
-    margin: auto;
-    margin-top: 100px;
-    padding: 40px;
-    background-color: rgb(188, 241, 223);
-    height:50vh;
-  } */
-/* .label-input{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: left;
-    margin-bottom: 20px;
-  } */
-/* .label{
-    font-size: 20px;
-    width:150px;
-  } */
+.button-text {
+  margin-left: 8px;
+}
+
 .top-container-map {
   display: flex;
   height: 40px;
@@ -29,6 +9,11 @@
   margin: 10px;
   align-items: center;
 }
+
+.top-container-map > * {
+  margin: 0 5px; /* Add space between elements */
+}
+
 .btn-container {
   display: flex;
   flex-direction: row;

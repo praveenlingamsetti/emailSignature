@@ -6,8 +6,7 @@ import { Icon } from "leaflet";
 import * as XLSX from "xlsx";
 import { CgArrowLongLeft } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
-import CircularProgress from "@mui/material/CircularProgress";
-import { Box, LinearProgress } from "@mui/material";
+
 import toast from "react-hot-toast";
 
 const ZipCodeFromExcel = () => {
@@ -83,14 +82,14 @@ const ZipCodeFromExcel = () => {
   };
 
   useEffect(() => {
-    const delay = 1200;
+    const delay = 1100;
 
     zipCodes.forEach((each, index) => {
       setTimeout(() => {
         getCoordinatesFromZIP(each, delay);
         if (index === zipCodes.length - 1) {
           toast.success("Completed");
-          console.log("completed");
+          //console.log("completed");
         }
       }, index * delay);
     });
@@ -107,7 +106,7 @@ const ZipCodeFromExcel = () => {
   }, [locations]);
 
   const handleClearData = () => {
-    if (window.confirm("Do You Want to Clear?")) {
+    if (window.confirm("Are you sure you want to clear?")) {
       localStorage.removeItem("locations");
       localStorage.removeItem("zipCodes");
       setLocations([]);
@@ -119,8 +118,14 @@ const ZipCodeFromExcel = () => {
   return (
     <>
       <div className="top-container-map">
-        <CgArrowLongLeft size={15} />
-        <span onClick={() => navigate("/")}> Back</span>
+        <CgArrowLongLeft style={{ marginTop: "7px" }} size={15} />
+        <span
+          style={{ cursor: "pointer", marginTop: "6px" }}
+          onClick={() => navigate("/")}
+        >
+          {" "}
+          Back
+        </span>
         <input
           style={{ marginTop: "20px" }}
           type="file"
@@ -129,7 +134,7 @@ const ZipCodeFromExcel = () => {
         />
       </div>
       <MapContainer
-        center={[12.972442, 77.580643]} // Centered around the india
+        center={[12, 77]} // Centered around the india
         zoom={5}
         style={{ height: "400px", width: "80%", margin: "auto" }}
       >
